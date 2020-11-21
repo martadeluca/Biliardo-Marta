@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -227,8 +227,20 @@ public class BiliardoManager : MonoBehaviour
                 myball.velocity = new Vector3(parameters.ballSpeed, parameters.ballSpeed, parameters.ballSpeed);
             }
 
+            if (soffitto.transform.position.y - b.transform.position.y == parameters.ballSize / 2 & myball.speed.y > 0)
+            {
+                Debug.Log("colpo 1: " + myball.speed);
+                myball.ultimavel = - myball.velocity;
+                myball.nuovavel = - myball.velocity;
+                myball.tstart = 0;
+
+                myball.c = 1;
+                myball.z = 1;               
+            }
+
             if (b.transform.position.y - pavimento.transform.position.y == parameters.ballSize / 2 & myball.speed.y < 0)
             {
+                Debug.Log("colpo 2: " + myball.speed);
                 myball.ultimavel = myball.velocity;
                 myball.nuovavel = myball.velocity;
                 myball.tstart = 0;
