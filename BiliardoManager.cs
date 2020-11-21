@@ -188,8 +188,8 @@ public class BiliardoManager : MonoBehaviour
                 p.GetComponent<MyBall>().direzione *= -1;
 
                 myball.v_temp = myball.speed;
-                myball.speed = p.GetComponent<MyBall>().speed * 5;
-                p.GetComponent<MyBall>().speed = myball.v_temp * 5;
+                myball.speed = p.GetComponent<MyBall>().speed;
+                p.GetComponent<MyBall>().speed = myball.v_temp;
 
                 if (parameters.gravityValue != 0)
                 {
@@ -203,8 +203,8 @@ public class BiliardoManager : MonoBehaviour
                 p.GetComponent<MyBall>().direzione = myball.direzione * -1;
 
                 myball.v_temp = myball.speed;
-                myball.speed = p.GetComponent<MyBall>().speed * 5;
-                p.GetComponent<MyBall>().speed = myball.v_temp * 5;
+                myball.speed = p.GetComponent<MyBall>().speed;
+                p.GetComponent<MyBall>().speed = myball.v_temp;
 
                 if (parameters.gravityValue != 0)
                 {
