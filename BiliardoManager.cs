@@ -156,111 +156,47 @@ public class BiliardoManager : MonoBehaviour
     {
         foreach (GameObject b in ball)
         {
-            UpdatePalla(b);
+            FixedUpdatePalla(b);
         }
     }
 
-    public void UpdatePalla(GameObject b)
+    public void FixedUpdatePalla(GameObject b)
     {
         MyBall myball = b.GetComponent<MyBall>();
         myball.velparametro = parameters.ballSpeed;
 
-        if (parete1.transform.position.z - b.transform.position.z == parameters.ballSize / 2 & myball.speed.z > 0)
-            myball.direzione.Scale(new Vector3(1.0f, 1.0f, -1.0f));
-        if (b.transform.position.z - parete3.transform.position.z == parameters.ballSize / 2 & myball.speed.z < 0)
-            myball.direzione.Scale(new Vector3(1.0f, 1.0f, -1.0f));
-        if (parete4.transform.position.x - b.transform.position.x == parameters.ballSize / 2 & myball.speed.x > 0)
-            myball.direzione.Scale(new Vector3(-1.0f, 1.0f, 1.0f));
-        if (b.transform.position.x - parete2.transform.position.x == parameters.ballSize / 2 & myball.speed.x < 0)
-            myball.direzione.Scale(new Vector3(-1.0f, 1.0f, 1.0f));
-        if (soffitto.transform.position.y - b.transform.position.y == parameters.ballSize / 2 & myball.speed.y > 0)
-            myball.direzione.Scale(new Vector3(1.0f, -1.0f, 1.0f));
-        if (b.transform.position.y - pavimento.transform.position.y == parameters.ballSize / 2 & myball.speed.y < 0)
-            myball.direzione.Scale(new Vector3(1.0f, -1.0f, 1.0f));
+        if (parete1.transform.position.z - b.transform.position.z == parameters.ballSize / 2 & myball.velocity.z > 0)
+            myball.velocity.Scale(new Vector3(1.0f, 1.0f, -1.0f));
+        if (b.transform.position.z - parete3.transform.position.z == parameters.ballSize / 2 & myball.velocity.z < 0)
+            myball.velocity.Scale(new Vector3(1.0f, 1.0f, -1.0f));
+        if (parete4.transform.position.x - b.transform.position.x == parameters.ballSize / 2 & myball.velocity.x > 0)
+            myball.velocity.Scale(new Vector3(-1.0f, 1.0f, 1.0f));
+        if (b.transform.position.x - parete2.transform.position.x == parameters.ballSize / 2 & myball.velocity.x < 0)
+            myball.velocity.Scale(new Vector3(-1.0f, 1.0f, 1.0f));
+        if (soffitto.transform.position.y - b.transform.position.y == parameters.ballSize / 2 & myball.velocity.y > 0)
+            myball.velocity.Scale(new Vector3(1.0f, -1.0f, 1.0f));
+        if (b.transform.position.y - pavimento.transform.position.y == parameters.ballSize / 2 & myball.velocity.y < 0)
+            myball.velocity.Scale(new Vector3(1.0f, -1.0f, 1.0f));
 
         foreach (GameObject p in ball)
         {
-            myball.p_test = b.transform.position - p.transform.position;
+            if (Object.ReferenceEquals(b,p)) break;
 
-            if (Mathf.RoundToInt(myball.p_test.magnitude) == parameters.ballSize & AvvicinamentoPalla(b, p))
+            Vector3 dist = b.transform.position - p.transform.position;
+
+            if (Mathf.RoundToInt(dist.magnitude) <= parameters.ballSize & AvvicinamentoPalla(b, p))
             {
-                myball.direzione *= -1;
-                p.GetComponent<MyBall>().direzione *= -1;
-
-                myball.v_temp = myball.speed;
-                myball.speed = p.GetComponent<MyBall>().speed;
-                p.GetComponent<MyBall>().speed = myball.v_temp;
-
-                if (parameters.gravityValue != 0)
-                {
-                    myball.c = 0;
-                    p.GetComponent<MyBall>().c = 0;
-                }
-            }
-            if (Mathf.RoundToInt(myball.p_test.magnitude) > 0 & Mathf.RoundToInt(myball.p_test.magnitude) < parameters.ballSize & AvvicinamentoPalla(b, p))
-            {
-                myball.direzione *= -1;
-                p.GetComponent<MyBall>().direzione = myball.direzione * -1;
-
-                myball.v_temp = myball.speed;
-                myball.speed = p.GetComponent<MyBall>().speed;
-                p.GetComponent<MyBall>().speed = myball.v_temp;
-
-                if (parameters.gravityValue != 0)
-                {
-                    myball.c = 0;
-                    p.GetComponent<MyBall>().c = 0;
-                }
-            }
+                Swap(ref myball.velocity, ref p.GetComponent<MyBall>().velocity);
+            }       
         }
 
-        if (parameters.gravityValue == 0.0f)
+        if(parameters.gravityValue != 0)
         {
-            myball.velocity = new Vector3(parameters.ballSpeed, parameters.ballSpeed, parameters.ballSpeed);
-        }
-        else
-        {
-            myball.gravval = parameters.gravityValue;
-
-            if(myball.c == 0)
-            {
-                myball.velocity = new Vector3(parameters.ballSpeed, parameters.ballSpeed, parameters.ballSpeed);
-            }
-
-            if (soffitto.transform.position.y - b.transform.position.y == parameters.ballSize / 2 & myball.speed.y > 0)
-            {
-                Debug.Log("colpo 1: " + myball.speed);
-                myball.ultimavel = - myball.velocity;
-                myball.nuovavel = - myball.velocity;
-                myball.tstart = 0;
-
-                myball.c = 1;
-                myball.z = 1;               
-            }
-
-            if (b.transform.position.y - pavimento.transform.position.y == parameters.ballSize / 2 & myball.speed.y < 0)
-            {
-                Debug.Log("colpo 2: " + myball.speed);
-                myball.ultimavel = myball.velocity;
-                myball.nuovavel = myball.velocity;
-                myball.tstart = 0;
-
-                if (myball.ultimavel.y > 15)
-                {
-                    myball.c = 1;
-                    myball.z = 0;
-                }
-                else
-                {
-                    myball.c = 2;
-                    myball.ultimavel = myball.velocity;
-                }
-            }
+            myball.velocity.y -= parameters.gravityValue * 9.8f * Time.deltaTime;
+            myball.velocity *= 1 - (myball.drag * Time.deltaTime);
         }
 
-        myball.speed = new Vector3 (myball.direzione.x * Mathf.Abs(myball.velocity.x), myball.direzione.y * Mathf.Abs(myball.velocity.y), myball.direzione.z * Mathf.Abs(myball.velocity.z));              
-        
-        myball.p_temp = b.transform.position + (myball.speed * Time.deltaTime);
+        myball.p_temp = b.transform.position + myball.velocity * Time.deltaTime;
 
         if (parete1.transform.position.z - myball.p_temp.z < parameters.ballSize / 2)
             myball.p_temp.z = parete1.transform.position[2] - parameters.ballSize / 2;
@@ -278,30 +214,28 @@ public class BiliardoManager : MonoBehaviour
         b.transform.position = myball.p_temp;
     }
 
+    public void Swap(ref Vector3 a, ref Vector3 b)
+    {
+        Vector3 t = a;
+        a = b;
+        b = t;
+    }
+
     public bool AvvicinamentoPalla(GameObject a, GameObject b)
     {
-        bool avv = true;
+        Vector3 velrel = a.GetComponent<MyBall>().velocity - b.GetComponent<MyBall>().velocity;
+        Vector3 dist = a.transform.position - b.transform.position;
 
-        Vector3 pa_now = a.transform.position;
-        Vector3 pb_now = b.transform.position;
+        float k = Vector3.Dot(velrel, dist);
 
-        Vector3 pa_next = a.transform.position + (a.GetComponent<MyBall>().speed * Time.deltaTime);
-        Vector3 pb_next = b.transform.position + (b.GetComponent<MyBall>().speed * Time.deltaTime);
-
-        if ((pa_next - pb_next).magnitude < (pa_now - pb_now).magnitude)
-            avv = true;
-        if ((pa_next - pb_next).magnitude > (pa_now - pb_now).magnitude)
-            avv = false;
-        
-        return avv;
+        return k < 0;
     }
 
     public void InizializzaPalla(GameObject b)
     {
         MyBall myball = b.GetComponent<MyBall>();
 
-        myball.vel_comp = Mathf.Round(Random.Range(-100.0f, 100.0f) * 100f) / 100f;
-        myball.speed = new Vector3(myball.vel_comp, myball.vel_comp, myball.vel_comp);
+        myball.velocity = Random.onUnitSphere * parameters.ballSpeed;
     }
 
     public void ApplyParameters()
