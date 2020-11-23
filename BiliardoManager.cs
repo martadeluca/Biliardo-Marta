@@ -13,7 +13,7 @@ public class BiliardoManager : MonoBehaviour
     public Parameters parameters;
     public ChangeParameters changeparameters;
     public TextManager textmanager;
-    public RecordScene recordscene;
+    //public RecordScene recordscene;
 
     public GameObject ballToClone;
 
@@ -50,8 +50,8 @@ public class BiliardoManager : MonoBehaviour
 
     public float timeLeft = 10.0f;
 
-    string fileName = "Registrazione.txt";
-    public StreamWriter sr;
+    //string fileName = "Registrazione.txt";
+    //public StreamWriter sr;
 
     float altezza;
     bool onetime = false;
@@ -74,15 +74,18 @@ public class BiliardoManager : MonoBehaviour
         pavimento.transform.localPosition = new Vector3(0.0f, -parete1.transform.localScale[1] / 2, 0.0f);
         soffitto.transform.localPosition = new Vector3(0.0f, parete1.transform.localScale[1] / 2, 0.0f);
 
-        sr = File.CreateText(fileName);
+        //sr = File.CreateText(fileName);
     }
 
     void Update()
     {
         ApplyParameters();
+        
         SliderCS(sliderCS.value);
+        SliderProf(sliderProf.value);
         SliderProsp(sliderProsp.value);
         SliderShadow(sliderShadow.value);
+
         parameters.gravityValue = sliderGravity.value;
 
         pavimento.transform.localPosition = new Vector3(0.0f, -(parete1.transform.localScale[1] / 2) + parete1.transform.localPosition[1], 0.0f);
@@ -103,21 +106,21 @@ public class BiliardoManager : MonoBehaviour
         {
             canvas2.SetActive(false);
 
-			if (!onetime)
+			/*if (!onetime)
 			{
                 recordscene.StartRecord();
                 onetime = true;
-            }
+            }*/
         }
         else if (k % 4 == 3)
         {
             canvas3.SetActive(true);
 
-            if (onetime)
+            /*if (onetime)
             {
                 recordscene.StopRecord();
                 onetime = false;
-            }
+            }*/
         }
         else if (k % 4 == 0)
         {
@@ -144,11 +147,11 @@ public class BiliardoManager : MonoBehaviour
             }
         }
 
-        foreach(GameObject b in ball)
+        /*foreach(GameObject b in ball)
         {
             string s = "(" + Time.realtimeSinceStartup + "," + b.transform.position[0] + "," + b.transform.position[1] + "," + b.transform.position[2] + ")";
             sr.WriteLine(s);
-        }
+        }*/
     }
 
     private void FixedUpdate()
@@ -298,7 +301,7 @@ public class BiliardoManager : MonoBehaviour
     {
        Random.InitState(parameters.randomSeed);
     }
-    
+
     public void SliderMaster(float val)
     {
         SliderProsp(val);
@@ -393,18 +396,19 @@ public class BiliardoManager : MonoBehaviour
                 diffuse = Color.Lerp(Color.black, b.GetComponent<Renderer>().material.color, val * 2);
                 specular = Color.Lerp(Color.black, Color.gray, val * 2);
                 b.GetComponent<Renderer>().material.SetFloat("_Glossiness", 0.0f);
-                b.GetComponent<Renderer>().material.SetColor("_SpecColor", specular);
             }
 
             else
             {
                 emission = Color.black;
                 diffuse = b.GetComponent<Renderer>().material.color;
+                specular = Color.gray;
                 b.GetComponent<Renderer>().material.SetFloat("_Glossiness", Mathf.Lerp(0.0f, 0.55f, val * 2 - 1));
             }
 
             b.GetComponent<Renderer>().material.SetColor("_EmissionColor", emission);
             b.GetComponent<Renderer>().material.SetColor("_Color", diffuse);
+            b.GetComponent<Renderer>().material.SetColor("_SpecColor", specular);
         }
 
         parameters.chiaroscuroValue = sliderCS.value;
