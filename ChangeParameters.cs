@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System;
 using UnityEngine;
@@ -58,6 +58,9 @@ public class ChangeParameters : MonoBehaviour
     public void SpeedChange(string n)
     {
         parameters.ballSpeed = float.Parse(n);
+
+        foreach(GameObject b in biliardomanager.ball)
+          b.GetComponent<MyBall>().velocity = b.GetComponent<MyBall>().velocity.normalized * parameters.ballSpeed;
     }
 
     public void RandomSeedChange(string n)
@@ -78,9 +81,8 @@ public class ChangeParameters : MonoBehaviour
         biliardomanager.sliderShadow.value = Random.Range(0.0f, 1.0f);
         biliardomanager.sliderDC.value = Random.Range(0.0f, 1.0f);
 
+        biliardomanager.sliderGravity.value = Random.Range(0.0f, 1.0f);
         biliardomanager.sliderColor.value = Random.Range(0.0f, 1.0f);
     }
 
 }
-
-
